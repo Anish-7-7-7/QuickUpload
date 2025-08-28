@@ -21,23 +21,35 @@ const FileSearch = () => {
   };
 
   return (
-    <div className="max-w-md mx-auto p-4">
-      <form onSubmit={handleSearch} className="flex gap-2 mb-4">
+    <div className="max-w-lg mx-auto p-4 sm:p-6">
+      {/* Search Form */}
+      <form
+        onSubmit={handleSearch}
+        className="flex flex-col sm:flex-row gap-2 mb-4"
+      >
         <input
           type="text"
           placeholder="Search files by name"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          className="flex-1 border p-2 rounded"
+          className="flex-1 border p-2 rounded w-full sm:w-auto"
         />
-        <button className="bg-blue-600 text-white px-4 py-2 rounded">Search</button>
+        <button className="bg-blue-600 text-white px-4 py-2 rounded w-full sm:w-auto">
+          Search
+        </button>
       </form>
 
-      <ul>
+      {/* Files List */}
+      <ul className="flex flex-col gap-2">
         {files.map((file) => (
-          <li key={file._id}>
-            <a href={file.fileUrl} target="_blank" rel="noopener noreferrer">
-              {file.name} ({file.quality})
+          <li key={file._id} className="break-words">
+            <a
+              href={file.fileUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-blue-600 hover:underline"
+            >
+              {file.name} {file.quality && `(${file.quality})`}
             </a>
           </li>
         ))}
