@@ -10,7 +10,6 @@ const Profile = () => {
   const [subFolders, setSubFolders] = useState([]);
   const [selectedSubFolder, setSelectedSubFolder] = useState("all");
 
-  // Fetch profile data
   const fetchProfile = async () => {
     try {
       const { data } = await API.get("/api/v1/profile", {
@@ -35,7 +34,6 @@ const Profile = () => {
     setFolderFilesMap({ ...folderFilesMap, [folder._id]: [] });
   };
 
-  // Update subfolders when a parent folder is selected
   useEffect(() => {
     if (selectedFolder === "all") {
       setSubFolders([]);
@@ -47,7 +45,6 @@ const Profile = () => {
     }
   }, [selectedFolder, folders]);
 
-  // Determine which files to show
   const displayedFiles = () => {
     if (selectedFolder === "all") return folderFilesMap["all"] || [];
     if (selectedSubFolder === "all") return folderFilesMap[selectedFolder] || [];
@@ -55,29 +52,29 @@ const Profile = () => {
   };
 
   return (
-    <div className="p-6 max-w-5xl mx-auto">
+    <div className="p-4 sm:p-6 max-w-6xl mx-auto">
       {/* User Info */}
-      <div className="flex items-center bg-gradient-to-r from-blue-500 to-purple-500 text-white p-6 rounded-lg shadow mb-6">
-        <div className="w-20 h-20 bg-white rounded-full flex items-center justify-center text-3xl font-bold text-blue-600 mr-6">
+      <div className="flex flex-col sm:flex-row items-center bg-gradient-to-r from-blue-500 to-purple-500 text-white p-4 rounded-lg shadow mb-6">
+        <div className="w-20 h-20 sm:w-24 sm:h-24 bg-white rounded-full flex items-center justify-center text-3xl sm:text-4xl font-bold text-blue-600 mb-3 sm:mb-0 sm:mr-6">
           {user.name?.charAt(0).toUpperCase()}
         </div>
-        <div>
-          <h1 className="text-3xl font-bold">{user.name}</h1>
-          <p className="text-gray-100">{user.email}</p>
+        <div className="text-center sm:text-left">
+          <h1 className="text-2xl sm:text-3xl font-bold truncate">{user.name}</h1>
+          <p className="text-gray-100 text-sm sm:text-base truncate">{user.email}</p>
         </div>
       </div>
 
       {/* Create Folder */}
       <div className="mb-6">
-        <h2 className="text-xl font-semibold mb-2">Create Folder</h2>
+        <h2 className="text-lg sm:text-xl font-semibold mb-2">Create Folder</h2>
         <Folder folders={folders} onFolderCreated={handleFolderCreated} />
       </div>
 
-      {/* Parent Folder Tabs */}
-      <div className="mb-4 flex space-x-3 overflow-x-auto">
+    
+      <div className="mb-4 flex overflow-x-auto space-x-2 sm:space-x-3 py-2">
         <button
           onClick={() => setSelectedFolder("all")}
-          className={`px-4 py-2 rounded-full font-semibold ${
+          className={`flex-shrink-0 px-3 py-2 rounded-full font-semibold text-sm sm:text-base whitespace-nowrap ${
             selectedFolder === "all" ? "bg-blue-600 text-white" : "bg-gray-200 text-gray-800"
           }`}
         >
@@ -87,7 +84,7 @@ const Profile = () => {
           <button
             key={f._id}
             onClick={() => setSelectedFolder(f._id)}
-            className={`px-4 py-2 rounded-full font-semibold ${
+            className={`flex-shrink-0 px-3 py-2 rounded-full font-semibold text-sm sm:text-base whitespace-nowrap ${
               selectedFolder === f._id ? "bg-blue-600 text-white" : "bg-gray-200 text-gray-800"
             }`}
           >
@@ -98,10 +95,10 @@ const Profile = () => {
 
       {/* Subfolder Tabs */}
       {subFolders.length > 0 && (
-        <div className="mb-4 flex space-x-3 overflow-x-auto ml-4">
+        <div className="mb-4 flex overflow-x-auto space-x-2 sm:space-x-3 py-2 ml-0 sm:ml-4">
           <button
             onClick={() => setSelectedSubFolder("all")}
-            className={`px-4 py-2 rounded-full font-semibold ${
+            className={`flex-shrink-0 px-3 py-2 rounded-full font-semibold text-sm sm:text-base whitespace-nowrap ${
               selectedSubFolder === "all" ? "bg-green-600 text-white" : "bg-gray-200 text-gray-800"
             }`}
           >
@@ -111,7 +108,7 @@ const Profile = () => {
             <button
               key={sf._id}
               onClick={() => setSelectedSubFolder(sf._id)}
-              className={`px-4 py-2 rounded-full font-semibold ${
+              className={`flex-shrink-0 px-3 py-2 rounded-full font-semibold text-sm sm:text-base whitespace-nowrap ${
                 selectedSubFolder === sf._id ? "bg-green-600 text-white" : "bg-gray-200 text-gray-800"
               }`}
             >
@@ -123,16 +120,16 @@ const Profile = () => {
 
       {/* Files Grid */}
       <div>
-        <h2 className="text-xl font-semibold mb-2">Files</h2>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <h2 className="text-lg sm:text-xl font-semibold mb-2">Files</h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
           {displayedFiles().map(file => (
-            <div key={file._id} className="border rounded shadow p-2">
+            <div key={file._id} className="border rounded shadow p-2 flex flex-col">
               <img
                 src={file.fileUrl}
                 alt={file.name}
-                className="w-full h-32 object-cover rounded"
+                className="w-full h-40 sm:h-32 md:h-40 object-cover rounded"
               />
-              <p className="mt-2 text-center font-medium">{file.name}</p>
+              <p className="mt-2 text-center text-sm sm:text-base font-medium break-words truncate">{file.name}</p>
             </div>
           ))}
         </div>
