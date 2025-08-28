@@ -23,13 +23,12 @@ exports.auth = async (req, res, next) => {
       return res.status(401).json({ success: false, message: "Token Invalid" });
     }
 
-    // Wrap DB call in try/catch to avoid crashing
     try {
       const user = await User.findById(decoded.id);
       if (!user) {
         return res.status(401).json({ success: false, message: "User not found" });
       }
-      req.user = user; // ✅ now req.user._id exists
+      req.user = user; 
     } catch (err) {
       console.error("DB error in auth middleware:", err);
       return res.status(500).json({ success: false, message: "Server Error" });

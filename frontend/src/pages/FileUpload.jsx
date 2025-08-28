@@ -1,44 +1,52 @@
-import React, { useState } from "react";
+// components/FileUpload.jsx
+import React, { useEffect, useState } from "react";
 import API from "../api/axios";
 
 const FileUpload = () => {
   const [name, setName] = useState("");
   const [file, setFile] = useState(null);
   const [quality, setQuality] = useState("Medium");
+  const [folderId, setFolderId] = useState("");
+  const [folders, setFolders] = useState([]);
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const fetchFolders = async () => {
+      try {
+        const { data } = await API.get("/api/v1/profile", {
+          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+        });
+        if (data.success) setFolders(data.folders);
+      } catch (err) {
+        console.error(err);
+      }
+    };
+    fetchFolders();
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!file) return alert("Please select a file");
+    if (!file) return alert("Select a file");
 
     try {
       setLoading(true);
-
       const formData = new FormData();
-      formData.append("file", file);     
+      formData.append("file", file);
       formData.append("name", name);
       formData.append("quality", quality);
-
-      
-      for (let pair of formData.entries()) {
-        console.log(pair[0], pair[1]);
-      }
+      formData.append("folderId", folderId);
 
       const { data } = await API.post("/api/v1/upload", formData, {
-  headers: {
-    Authorization: `Bearer ${localStorage.getItem("token")}`,
-    "Content-Type": "multipart/form-data",
-  },
-    });
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+      });
 
-      alert("File uploaded successfully!");
-      console.log(data);
-
+      alert("Uploaded!");
       setName("");
       setFile(null);
       setQuality("Medium");
+      setFolderId("");
     } catch (err) {
-      console.error("Upload error:", err.response || err);
+      console.error(err);
       alert("Upload failed");
     } finally {
       setLoading(false);
@@ -46,43 +54,21 @@ const FileUpload = () => {
   };
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="p-4 max-w-md mx-auto bg-white shadow rounded space-y-3"
-    >
-      <h2 className="text-xl font-bold">Upload File</h2>
-
-      <input
-        type="text"
-        placeholder="Enter file name"
-        value={name}
-        onChange={(e) => setName(e.target.value)}
-        className="block w-full border p-2 rounded"
-        required
-      />
-
-      <input
-        type="file"
-        onChange={(e) => setFile(e.target.files[0])}
-        className="block w-full"
-        required
-      />
-
-      <select
-        value={quality}
-        onChange={(e) => setQuality(e.target.value)}
-        className="block w-full border p-2 rounded"
-      >
+    <form onSubmit={handleSubmit} className="p-4 max-w-md mx-auto bg-white shadow rounded space-y-3">
+      <input type="text" placeholder="Name" value={name} onChange={(e) => setName(e.target.value)} required className="border p-2 w-full rounded" />
+      <input type="file" onChange={(e) => setFile(e.target.files[0])} required className="w-full" />
+      <select value={quality} onChange={(e) => setQuality(e.target.value)} className="border p-2 w-full rounded">
         <option value="Low">Low</option>
         <option value="Medium">Medium</option>
         <option value="High">High</option>
       </select>
-
-      <button
-        type="submit"
-        disabled={loading}
-        className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 disabled:opacity-50"
-      >
+      <select value={folderId} onChange={(e) => setFolderId(e.target.value)} className="border p-2 w-full rounded">
+        <option value="">--Select Folder--</option>
+        {folders.map((f) => (
+          <option key={f._id} value={f._id}>{f.name}</option>
+        ))}
+      </select>
+      <button type="submit" disabled={loading} className="bg-blue-600 text-white px-4 py-2 rounded">
         {loading ? "Uploading..." : "Upload"}
       </button>
     </form>

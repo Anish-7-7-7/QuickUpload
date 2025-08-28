@@ -3,8 +3,10 @@ const mongoose = require("mongoose");
 const fileSchema = new mongoose.Schema({
   name: { type: String, required: true },
   fileUrl: { type: String, required: true },
-  quality: { type: String, enum: ["Low", "Medium", "High"], default: "Medium" },
+  quality: { type: String, default: "Medium" },
   uploadedBy: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
-}, { timestamps: true });
+  folder: { type: mongoose.Schema.Types.ObjectId, ref: "Folder", default: null },
+  createdAt: { type: Date, default: Date.now },
+});
 
 module.exports = mongoose.model("File", fileSchema);

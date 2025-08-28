@@ -3,16 +3,33 @@ const router = express.Router();
 
 const{signup,Login} = require("../controllers/userController");
 const{auth} = require("../middleware/auth");
-
-// File routes
-const { uploadFile, searchFiles, getProfileWithFiles } = require("../controllers/FileController");
 const upload = require("../middleware/multer");
-router.post("/upload",auth, upload.single("file"), uploadFile);
+// File routes
+const {
+  uploadFile,
+  createFolder,
+  getProfile,
+  searchFiles,
+} = require("../controllers/FileController");
+
+// File Upload
+router.post("/upload", auth, upload.single("file"), uploadFile);
+
+// Create Folder
+router.post("/folder", auth, createFolder);
+
+// Profile (folders + files)
+router.get("/profile", auth, getProfile);
+
+// Search Files
 router.get("/search", auth, searchFiles);
-router.get("/profile", auth, getProfileWithFiles);
+
 
 // Profile routes
 router.post("/Signup",signup);
 router.post("/Login",Login);
 
 module.exports = router;
+
+
+

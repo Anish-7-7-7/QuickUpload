@@ -8,7 +8,7 @@ const FileSearch = () => {
   const handleSearch = async (e) => {
     e.preventDefault();
     try {
-      const { data } = await API.get(`/api/v1/search?query=${query}`, {
+      const { data } = await API.get(`/api/v1/search?q=${query}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
