@@ -16,7 +16,7 @@ app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-const Port = process.env.Port || 5000;
+const Port = process.env.PORT || 5000;
 
 const route = require("./routes/route");
 app.use("/api/v1",route);
